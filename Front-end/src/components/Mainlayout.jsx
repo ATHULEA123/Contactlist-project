@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
-import Header from "./Header";
-import Tables from "./Tables";
-import Footer from "./Footer";
-import Form from "./Form";
-import Deleteform from "./Deleteform";
+import React, { useState, useEffect, Suspense, useCallback } from "react";
 import { fetchContacts } from "../components/redux/contactSlice";
 import { useSelector, useDispatch } from "react-redux";
+import Lazyloading from "./Lazyloading";
+
+const LazyHeader = React.lazy(() => import("./Header"));
+const LazyTables = React.lazy(() => import("./Tables"));
+const LazyFooter = React.lazy(() => import("./Footer"));
+const LazyForm = React.lazy(() => import("./Form"));
+const LazyDeleteForm = React.lazy(() => import("./Deleteform"));
 
 function Mainlayout() {
   const [isFormVisible, setIsFormVisible] = useState(false);
@@ -15,14 +17,22 @@ function Mainlayout() {
   const [editingContact, setEditingContact] = useState(null);
   const dispatch = useDispatch();
   const total = useSelector((state) => state.contacts.total);
-  const totalPages = useSelector((state) => state.contacts.totalPages); // Total pages from Redux state
+  const totalPages = useSelector((state) => state.contacts.totalPages);
   const [searchTerm, setSearchTerm] = useState("");
-  const [limit, setLimit] = useState(10); // Default limit
-  const [page, setPage] = useState(1); // Default page
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  
+
+  const fetchMemoized = useCallback(() => {
+    dispatch(fetchContacts({ page, limit, searchTerm }))
+      .then((result) => {
+        console.log(result);
+      });
+  }, [dispatch, page, limit, searchTerm]);
 
   useEffect(() => {
-    dispatch(fetchContacts({ page, limit, searchTerm }));
-  }, [dispatch, page, limit, searchTerm]);
+    fetchMemoized();
+  }, [fetchMemoized]);
 
   const formVisible = (id) => {
     if (id) {
@@ -49,50 +59,62 @@ function Mainlayout() {
   };
 
   const handlePaginationChange = (newPage) => {
-    setPage(newPage);
+    if(newPage != page){
+      setPage(newPage);
+    }
+   
   };
 
   const handleLimitChange = (newLimit) => {
-    setLimit(newLimit);
-    setPage(1);
+    if(newLimit != limit){
+      setLimit(newLimit);
+      setPage(1);
+    }
+    
+    
   };
+
   return (
     <>
-    
-      <Header
-        formVisible={formVisible}
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        limit={limit}
-        setLimit={handleLimitChange}
-        totalPages={total}
-      />
+      <Suspense fallback={<Lazyloading />}>
+        <LazyHeader
+          formVisible={formVisible}
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          limit={limit}
+          setLimit={handleLimitChange}
+          totalPages={total}
+        />
 
-      <Tables
-        formVisible={formVisible}
-        deleteformvisible={deleteformvisible}
-        currentPage={page}
-        limit={limit}
-      />
+        <LazyTables
+          formVisible={formVisible}
+          deleteformvisible={deleteformvisible}
+          currentPage={page}
+          limit={limit}
+        />
 
-      <Footer
-        totalPages={totalPages}
-        currentPage={page}
-        limit={limit}
-        onPageChange={handlePaginationChange}
-      />
+        <LazyFooter
+          totalPages={totalPages}
+          currentPage={page}
+          limit={limit}
+          onPageChange={handlePaginationChange}
+        />
 
-      {isFormVisible && <div className="overlay" onClick={hideForm}></div>}
-      {isFormVisible && (
-        <Form formVisible={hideForm} initialContactData={editingContact} />
-      )}
+        {isFormVisible && <div className="overlay" onClick={hideForm}></div>}
+        {isFormVisible && (
+          <LazyForm formVisible={hideForm} initialContactData={editingContact} />
+        )}
 
-      {visible && <div className="overlay" onClick={hideDeleteForm}></div>}
-      {visible && (
-        <Deleteform deleteformvisible={hideDeleteForm} contactId={contactId} />
-      )}
+        {visible && <div className="overlay" onClick={hideDeleteForm}></div>}
+        {visible && (
+          <LazyDeleteForm deleteformvisible={hideDeleteForm} contactId={contactId} />
+        )}
+      </Suspense>
     </>
   );
 }
 
 export default Mainlayout;
+
+
+

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 function Header({
   formVisible,
@@ -8,15 +8,26 @@ function Header({
   setLimit,
   totalPages,
 }) {
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState(searchTerm);
+
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    
+    setDebouncedSearchTerm(e.target.value.trim());
   };
 
   const handleLimitChange = (e) => {
-    setLimit((e.target.value));
+    setLimit(parseInt(e.target.value, 10));
     console.log(totalPages);
   };
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchTerm(debouncedSearchTerm);
+    }, 500); //500ms debounce delay
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [debouncedSearchTerm, setSearchTerm]);
 
   return (
     <div className="header">
@@ -40,7 +51,7 @@ function Header({
               <option value={2}>2</option>
               <option value={3}>3</option>
               <option value={4}>4</option>
-              <option value={5}> 5 </option>
+              <option value={5}>5</option>
               <option value={6}>6</option>
               <option value={7}>7</option>
               <option value={8}>8</option>
@@ -52,8 +63,7 @@ function Header({
               className="search"
               name="myInput"
               placeholder="search here"
-              value={searchTerm}
-              
+              value={debouncedSearchTerm}
               onChange={handleSearchChange}
             />
           </div>
@@ -64,3 +74,4 @@ function Header({
 }
 
 export default Header;
+

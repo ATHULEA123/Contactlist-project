@@ -29,49 +29,6 @@ async function deleteContact(id) {
 }
 
 
-// const getcontact = async (searchTerm, page , limit) => {
-//   try {
-//     const skip = (page - 1) * limit;
-//     const pipeline = [];
-
-//     if (searchTerm) { 
-//       pipeline.push({
-//         $match: {
-//           $or: [
-//             { salutation: { $regex: searchTerm, $options: "i" } },
-//             { firstname: { $regex: searchTerm, $options: "i" } },
-//             { lastname: { $regex: searchTerm, $options: "i" } },
-//             { email: { $regex: searchTerm, $options: "i" } },
-//             { gender: { $regex: searchTerm, $options: "i" } },
-//             { phone: { $regex: searchTerm, $options: "i" } },
-//           ],
-//         },
-//       });
-//     }
-//     pipeline.push(
-//       { $sort: { createdAt: -1 } }, // Sort by creation date
-//       { $skip: skip },
-//       { $limit: limit }
-//     );
-//     // Get total count of documents matching the pipeline
-//     const totalContactsPipeline = [];
-//     totalContactsPipeline.push({ $count: "total" });
-//     const totalContacts = await contactModel.aggregate(totalContactsPipeline);
-//     console.log(totalContacts);
-//     const contacts = await contactModel.aggregate(pipeline);
-//     return {
-//       contacts,
-//       totalPages: Math.ceil(
-//         totalContacts.length > 0 ? totalContacts[0].total / limit : 0 
-//       ),
-//       currentPage: page,
-//       totalItems: totalContacts.length > 0 ? totalContacts[0].total : 0,
-//     };
-//   } catch (err) {
-//     console.error("Error in getContacts:", err);
-//     throw new Error("Error in fetching data");
-//   }
-// };
 const getcontact = async (searchTerm, page, limit) => {
   try {
     const skip = (page - 1) * limit;
@@ -98,7 +55,7 @@ const getcontact = async (searchTerm, page, limit) => {
       { $limit: limit }
     );
 
-    // Aggregate pipeline to get both results and total count
+   
     const aggregatePipeline = [
       { $facet: {
           contacts: pipeline,
@@ -109,7 +66,7 @@ const getcontact = async (searchTerm, page, limit) => {
 
     const results = await contactModel.aggregate(aggregatePipeline);
 
-    // Extract contacts and total count from results
+   
     const contacts = results[0].contacts;
     const totalContacts = results[0].totalCount[0].total;
 

@@ -12,8 +12,8 @@ function DeleteForm({ deleteformvisible, contactId }) {
     dispatch(deleteContact(contactId))
       .unwrap()
       .then(() => {
-        dispatch(fetchContacts()); // Refresh the contact list after deletion
-        deleteformvisible(); // Hide the delete form after deletion
+        dispatch(fetchContacts());  // Refresh the contact list after deletion
+        deleteformvisible();   // Hide the delete form after deletion
       })
       .catch((error) => {
         console.error('Failed to delete contact: ', error);

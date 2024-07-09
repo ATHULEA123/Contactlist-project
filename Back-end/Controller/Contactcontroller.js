@@ -35,23 +35,6 @@ const deleteData = asyncHandler(async (req, res) => {
 
 
 
-// const getcontact = asyncHandler(async (req, res) => {
-//   try {
-//     const contactlist = await service.getcontact();
-//     res.status(200).json(contactlist);
-//   } catch (error) {
-//     res.status(400).json({ message: "error in fetching data" });
-//   }
-// });
-
-
-// async function getAll(req, res) {
-//   try {
-//       const contacts = await service.getAll(req.query);
-//       res.json(contacts);
-//   } catch (error) {
-//       res.status(500).json({ message: error.message });
-//   }
  const getContacts = asyncHandler(async (req, res) => {
   const { searchTerm, page = 1, limit = 10 } = req.query;
   try {

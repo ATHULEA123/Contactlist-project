@@ -12,6 +12,7 @@ import {
 } from "../components/redux/contactSlice";
 
 const Form = ({ formVisible, initialContactData }) => {
+
   const dispatch = useDispatch();
   const [contact, setContact] = useState({
     salutation: "",
@@ -38,6 +39,7 @@ const Form = ({ formVisible, initialContactData }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (initialContactData) {
+     
       dispatch(
         updateContact({ id: initialContactData._id, updatedContact: contact })
       )

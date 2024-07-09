@@ -1,16 +1,17 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { fetchContacts } from "../components/redux/contactSlice";
+// import { fetchContacts } from "../components/redux/contactSlice";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faPenToSquare } from "@fortawesome/free-solid-svg-icons";
 
 function Tables({ formVisible, deleteformvisible, currentPage, limit }) {
+
   const dispatch = useDispatch();
   const contacts = useSelector((state) => state.contacts.items);
 
-  useEffect(() => {
-    dispatch(fetchContacts({ page: currentPage, limit }));
-  }, [dispatch, currentPage, limit]);
+  // useEffect(() => {
+  //   dispatch(fetchContacts());
+  // },[]);
 
   return (
     <div className="tables">

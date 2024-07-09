@@ -8,25 +8,25 @@ const API_URL = 'http://localhost:5000/contact';
 //   const response = await axios.get(API_URL);
 //   return response.data;
 // });
+// export const fetchContacts = createAsyncThunk(
+//   'contacts/fetchContacts',
+//   async ({ page , limit , searchTerm } = {}) => {
+  
+//     const response = await axios.get(API_URL, {
+//       params: { page, limit, searchTerm },
+//     });
+//     return response.data;
+//   }
+// );
 export const fetchContacts = createAsyncThunk(
   'contacts/fetchContacts',
-  async ({ page , limit , searchTerm } = {}) => {
-  
+  async ({ page = 1, limit = 10, searchTerm = '' } = {}) => {
     const response = await axios.get(API_URL, {
       params: { page, limit, searchTerm },
     });
     return response.data;
   }
 );
-// export const fetchContacts = createAsyncThunk(
-//   'contacts/fetchContacts',
-//   async ({ page = 1, limit = 10, search = '' } = {}) => {
-//     const response = await axios.get(API_URL, {
-//       params: { page, limit, search },
-//     });
-//     return response.data;
-//   }
-// );
 
 export const addContact = createAsyncThunk('contacts/addContact', async (newContact) => {
   const response = await axios.post(API_URL, newContact);

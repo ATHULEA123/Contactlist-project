@@ -122,6 +122,10 @@
     right: 11px;
     font-size: 25px;
   }
+  img{
+  width: 500px;
+    max-height: 100%;
+  }
  
   
   
